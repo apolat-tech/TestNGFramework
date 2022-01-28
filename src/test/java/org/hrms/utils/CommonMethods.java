@@ -2,8 +2,12 @@ package org.hrms.utils;
 
 import io.github.bonigarcia.wdm.WebDriverManager;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.support.ui.ExpectedCondition;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -34,7 +38,7 @@ public class CommonMethods {
                 throw new RuntimeException("Invalid Browser");
         }
         driver.get(ConfigsReader.getPropertyValue("url"));
-        //driver.manage().window().maximize();
+        driver.manage().window().maximize();
         driver.manage().timeouts().implicitlyWait(Constants.IMPLICIT_WAIT, TimeUnit.SECONDS);
     }
 
@@ -48,8 +52,43 @@ public class CommonMethods {
         }
     }
 
-    @Test
-    public void test() {
-        System.out.println(System.getProperty("user.dir"));
+    /**
+     * This method will clear textbox and send text to it
+     *
+     * @param element
+     * @param textToSend
+     */
+
+    public static void sendText(WebElement element, String textToSend) {
+        element.clear();
+        element.sendKeys(textToSend);
+    }
+
+    /**
+     * This method will return an object of Explicit wait with the time set to 20sec
+     *
+     * @return WebDriverWait
+     */
+    public static WebDriverWait getWait() {
+        WebDriverWait wait = new WebDriverWait(driver, Constants.EXPLICIT_WAIT);
+        return wait;
+    }
+
+    /**
+     * This method will wait until given element becomes clickable
+     *
+     * @param element
+     */
+    public static void waitForClickability(WebElement element) {
+        getWait().until(ExpectedConditions.elementToBeClickable(element));
+    }
+
+    /**
+     * This method will wait till and then click
+     * @param element
+     */
+    public static void click(WebElement element) {
+        waitForClickability(element);
+        element.click();
     }
 }
