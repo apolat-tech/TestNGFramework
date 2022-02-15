@@ -1,8 +1,8 @@
 package org.hrms.utils;
 
 import io.github.bonigarcia.wdm.WebDriverManager;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
+import org.apache.commons.io.FileUtils;
+import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.support.ui.ExpectedCondition;
@@ -13,11 +13,15 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 
+import java.io.File;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
 public class CommonMethods {
-    protected static WebDriver driver;
+    public static WebDriver driver;
 
     /**
      * this method will open a browser, set up configuration and navigate to url
@@ -85,10 +89,56 @@ public class CommonMethods {
 
     /**
      * This method will wait till and then click
+     *
      * @param element
      */
     public static void click(WebElement element) {
         waitForClickability(element);
         element.click();
+    }
+
+    /**
+     * This is JavaScript Executor
+     *
+     * @return
+     */
+
+    public static JavascriptExecutor getJSExecutor() {
+        JavascriptExecutor js = (JavascriptExecutor) driver;
+        return js;
+    }
+
+    public static void jsClick(WebElement element) {
+        getJSExecutor().executeScript("arguments[0].click();", element);
+
+    }
+
+    /**
+     * This is for taking screenshots
+     *
+     * @param fileName
+     */
+    public static void takeScreenshot(String fileName) {
+        TakesScreenshot ts = (TakesScreenshot) driver;
+        File sourceFile = ts.getScreenshotAs(OutputType.FILE);
+        try {
+            FileUtils.copyFile(sourceFile, new File(Constants.SCREENSHOT_FILEPATH + fileName + getTimeStamp("yyyy-MM-dd-HH-mm-ss")+".png"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * This method is for putting time stamp in the of the screenshot
+     * @param pattern
+     * @return
+     */
+
+
+    public static String getTimeStamp(String pattern) {
+
+        Date date = new Date();
+        SimpleDateFormat sdf = new SimpleDateFormat(pattern);
+            return sdf.format(date);
     }
 }
